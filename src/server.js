@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import { ENV } from "./config/env.js";
 import { db } from "./config/db.js";
 import { favoritesTable } from "./db/schema.js";
@@ -8,6 +9,14 @@ import job from "./config/cron.js";
 const PORT = ENV.PORT;
 const app = express();
 if (ENV.NODE_ENV === "production") job.start();
+
+// CORS configuration
+const corsOptions = {
+  origin: ENV.CORS_ORIGIN === "*" ? true : ENV.CORS_ORIGIN?.split(",") || "*",
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.get("/api/health", (req, res) => {
